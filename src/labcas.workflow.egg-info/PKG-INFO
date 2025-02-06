@@ -1,0 +1,60 @@
+Metadata-Version: 2.1
+Name: labcas.workflow
+Version: 0.1.0
+Summary: Get Planetary Data from the Planetary Data System (PDS)
+Home-page: https://github.com/NASA-PDS/peppi
+Download-URL: https://github.com/NASA-PDS/peppi/releases/
+Author: Labcas
+Author-email: labcas@jpl.nasa.gov
+License: apache-2.0
+Keywords: pds,planetary data,api
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.9
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+Requires-Dist: boto3~=1.36.10
+Requires-Dist: dask~=2024.8.0
+Requires-Dist: distributed
+Requires-Dist: scikit-image~=0.24.0
+Requires-Dist: pandas~=2.2.3
+Requires-Dist: matplotlib~=3.9.4
+Requires-Dist: tensorflow==2.9.1
+Provides-Extra: dev
+Requires-Dist: black~=23.7.0; extra == "dev"
+Requires-Dist: flake8~=6.1.0; extra == "dev"
+Requires-Dist: flake8-bugbear~=23.7.10; extra == "dev"
+Requires-Dist: flake8-docstrings~=1.7.0; extra == "dev"
+Requires-Dist: pep8-naming<0.15.0,>=0.13.3; extra == "dev"
+Requires-Dist: mypy~=1.5.1; extra == "dev"
+Requires-Dist: pydocstyle~=6.3.0; extra == "dev"
+Requires-Dist: coverage~=7.3.0; extra == "dev"
+Requires-Dist: pytest~=7.4.0; extra == "dev"
+Requires-Dist: pytest-cov~=4.1.0; extra == "dev"
+Requires-Dist: pytest-watch~=4.2.0; extra == "dev"
+Requires-Dist: pytest-xdist~=3.3.1; extra == "dev"
+Requires-Dist: pre-commit~=3.3.3; extra == "dev"
+Requires-Dist: sphinx~=7.2.6; extra == "dev"
+Requires-Dist: sphinx-rtd-theme~=2.0.0; extra == "dev"
+Requires-Dist: tox~=4.11.0; extra == "dev"
+Requires-Dist: types-setuptools<74.1.1,>=68.1.0; extra == "dev"
+Requires-Dist: Jinja2<3.1; extra == "dev"
+
+# LabCas Workflow
+
+Run workflows for Labcas
+
+
+## install
+
+    pip install -e '.[dev]'
+
+
+## Run
+
+Set you local AWS credentials to access the data (see 
+
+
+    ./aws-login.darwin.amd64
+
