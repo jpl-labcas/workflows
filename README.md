@@ -27,6 +27,9 @@ Start one worker
     docker run -p 8787:8787 -p 8786:8786 labcas/workflow dask worker
 
 
+Start the client
+
+    docker run labcas/workflow nebraska
 
 
     
