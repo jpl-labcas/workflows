@@ -3,12 +3,21 @@
 Run workflows for Labcas
 
 
-## install
+## Install
+
+### locally
 
 Preferably use a virtual environment with python 3.9
 
 
     pip install -e '.[dev]'
+
+### On ECS
+
+Build the docker image:
+
+    https://github.com/jpl-labcas/workflows.git
+
 
 
 ## Run
