@@ -7,6 +7,9 @@ from labcas.workflow.steps.alphan.process import process_img
 #            n_workers=1, memory_limit='2GB')
 # dask_client
 
+from distributed import Client
+client = Client('127.0.0.1:8786')
+
 
 def process_collection(bucket_name, in_prefix, out_prefix, fun, kwargs):
     # Use a breakpoint in the code line below to debug your script.

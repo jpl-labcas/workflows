@@ -15,7 +15,6 @@ from dask.distributed import Client
 import dask.array as da
 from dask.diagnostics import ProgressBar
 
-
 from labcas.workflow.manager import DataStore
 
 logger = logging.getLogger(__name__)
@@ -81,22 +80,21 @@ def process_img(datastore: DataStore, key: str, tile_size=64):
     print('padding')
     im = pad_to_n(im, w=tile_size)
 
-    #print('tiling the images')
-    #bw = np.zeros_like(im)
+    # print('tiling the images')
+    # bw = np.zeros_like(im)
 
     # Convert image and mask to dask arrays with chunking based on tile_size
     imw = da.from_array(im, chunks=(tile_size, tile_size))
 
     print('launch predictions')
-    model_instance = NucleiDetectorUnet64()
 
-    def process_tile(tile, model_instance):
+    def process_tile(tile):
         img = np.expand_dims(tile, axis=[0, 3])
-        p = model_instance.predict(img)[0, :, :, 0]
+        p = NucleiDetectorUnet64().predict(img)[0, :, :, 0]
         return p > 0.5
 
     # Apply function across chunks
-    results = imw.map_blocks(lambda tile: process_tile(tile, model_instance), dtype=bool)
+    results = imw.map_blocks(lambda tile: process_tile(tile), dtype=bool)
 
     # Compute the results
     with ProgressBar():
@@ -136,8 +134,6 @@ def process_img(datastore: DataStore, key: str, tile_size=64):
     csv_buffer = io.StringIO()
     image_df.to_csv(csv_buffer)
     datastore.write_output(csv_filename, csv_buffer.getvalue(), content_type="text/csv")
-
-
 
 
 def process_img_local(client: Client, datastore: DataStore, key: str, tile_size=64):
@@ -205,7 +201,3 @@ def process_img_local(client: Client, datastore: DataStore, key: str, tile_size=
     csv_buffer = io.StringIO()
     image_df.to_csv(csv_buffer)
     datastore.write_output(csv_filename, csv_buffer.getvalue(), content_type="text/csv")
-
-
-
-

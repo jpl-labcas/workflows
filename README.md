@@ -12,11 +12,24 @@ Preferably use a virtual environment with python 3.9
 
     pip install -e '.[dev]'
 
-### On ECS
+### With Dask on docker
 
 Build the docker image:
 
-    https://github.com/jpl-labcas/workflows.git
+    docker build -f docker/Dockerfile . -t labcas/workflow
+
+Start the scheduler:
+
+    docker run -p 8787:8787 -p 8686:8686 labcas/workflow dask scheduler
+
+Start one worker
+
+    docker run -p 8787:8787 -p 8686:8686 labcas/workflow dask worker
+
+
+
+
+    
 
 
 
