@@ -1,4 +1,4 @@
-FROM python:3.9-alpine
+FROM python:3.11-alpine
 
 # TODO remove when package is deployed on pypi
 RUN apk update; apk add --no-cache git
