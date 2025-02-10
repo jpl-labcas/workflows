@@ -20,11 +20,11 @@ Build the docker image:
 
 Start the scheduler:
 
-    docker run -p 8787:8787 -p 8686:8686 labcas/workflow dask scheduler
+    docker run -p 8787:8787 -p 8786:8786 labcas/workflow dask scheduler
 
 Start one worker
 
-    docker run -p 8787:8787 -p 8686:8686 labcas/workflow dask worker
+    docker run -p 8787:8787 -p 8786:8786 labcas/workflow dask worker
 
 
 

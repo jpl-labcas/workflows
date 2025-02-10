@@ -16,11 +16,11 @@ Requires-Python: >=3.9
 Description-Content-Type: text/markdown
 Requires-Dist: boto3~=1.36.10
 Requires-Dist: dask~=2024.8.0
-Requires-Dist: distributed
+Requires-Dist: distributed~=2024.8.0
 Requires-Dist: scikit-image~=0.24.0
 Requires-Dist: pandas~=2.2.3
 Requires-Dist: matplotlib~=3.9.4
-Requires-Dist: tensorflow==2.9.1
+Requires-Dist: tensorflow~=2.9.1
 Provides-Extra: dev
 Requires-Dist: black~=23.7.0; extra == "dev"
 Requires-Dist: flake8~=6.1.0; extra == "dev"
@@ -46,15 +46,49 @@ Requires-Dist: Jinja2<3.1; extra == "dev"
 Run workflows for Labcas
 
 
-## install
+## Install
+
+### locally
+
+Preferably use a virtual environment with python 3.9
+
 
     pip install -e '.[dev]'
+
+### With Dask on docker
+
+Build the docker image:
+
+    docker build -f docker/Dockerfile . -t labcas/workflow
+
+Start the scheduler:
+
+    docker run -p 8787:8787 -p 8786:8786 labcas/workflow dask scheduler
+
+Start one worker
+
+    docker run -p 8787:8787 -p 8786:8786 labcas/workflow dask worker
+
+
+
+
+    
+
 
 
 ## Run
 
-Set you local AWS credentials to access the data (see 
+Set you local AWS credentials to access the data
 
 
     ./aws-login.darwin.amd64
+
+
+Start the dask cluster
+
+
+Run the processing
+
+
+    python ./src/labcas/manager/main.py
 

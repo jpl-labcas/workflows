@@ -19,39 +19,14 @@ from labcas.workflow.manager import DataStore
 
 logger = logging.getLogger(__name__)
 
-model_dir = os.path.join(
-    os.path.dirname(__file__),
-    'models'
-)
 
-
-class NucleiDetectorUnet128:
-    def __init__(self):
-        self.model = load_model(os.path.join(model_dir, 'unet_128.h5'))
-        self.logger = logger
-        self.logger.info('model loaded')
-
-    def predict(self, img: np.ndarray):
-        os.environ["OMP_NUM_THREADS"] = '1'
-        p = self.model.predict(img)
-        return p
-
-
-class NucleiDetectorUnet64:
-    def __init__(self):
-        self.model = load_model(os.path.join(model_dir, 'unet_64.h5'))
-        self.logger = logger
-        self.logger.info('model loaded')
-
-    def predict(self, img: np.ndarray):
-        os.environ["OMP_NUM_THREADS"] = '1'
-        p = self.model.predict(img)
-        return p
-
-
-class NucleiDetectorUnet256:
-    def __init__(self):
-        self.model = load_model(os.path.join(model_dir, 'unet_256.h5'))
+class NucleiDetectorUnet:
+    def __init__(self, tile_size):
+        model_dir = os.path.join(
+            os.path.dirname(__file__),
+            'models'
+        )
+        self.model = load_model(os.path.join(model_dir, f'unet_{tile_size}.h5'))
         self.logger = logger
         self.logger.info('model loaded')
 
@@ -90,7 +65,7 @@ def process_img(datastore: DataStore, key: str, tile_size=64):
 
     def process_tile(tile):
         img = np.expand_dims(tile, axis=[0, 3])
-        p = NucleiDetectorUnet64().predict(img)[0, :, :, 0]
+        p = NucleiDetectorUnet(tile_size).predict(img)[0, :, :, 0]
         return p > 0.5
 
     # Apply function across chunks

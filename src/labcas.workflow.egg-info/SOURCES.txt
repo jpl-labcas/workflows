@@ -15,3 +15,6 @@ src/labcas/workflow/manager/main.py
 src/labcas/workflow/steps/__init__.py
 src/labcas/workflow/steps/alphan/process.py
 src/labcas/workflow/steps/alphan/utils.py
+src/labcas/workflow/steps/alphan/models/unet_128.h5
+src/labcas/workflow/steps/alphan/models/unet_256.h5
+src/labcas/workflow/steps/alphan/models/unet_64.h5
