@@ -1,4 +1,5 @@
-FROM python:3.11-alpine
+#FROM python:3.11-alpine
+FROM tensorflow/tensorflow:2.9.3
 
 # TODO remove when package is deployed on pypi
 RUN apk update; apk add --no-cache git
