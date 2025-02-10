@@ -12,6 +12,7 @@ from .utils import bw_watershed
 from .utils import plot_contours
 from .utils import extract_regionprops
 from dask.distributed import Client
+from dask.distributed import print
 import dask.array as da
 from dask.diagnostics import ProgressBar
 
@@ -33,6 +34,7 @@ class NucleiDetectorUnet:
     def predict(self, img: np.ndarray):
         os.environ["OMP_NUM_THREADS"] = '1'
         p = self.model.predict(img)
+        print(type(p))
         return p
 
 
@@ -61,11 +63,12 @@ def process_img(datastore: DataStore, key: str, tile_size=64):
     # Convert image and mask to dask arrays with chunking based on tile_size
     imw = da.from_array(im, chunks=(tile_size, tile_size))
 
-    print('launch predictions')
+    print('launch predictions 2')
 
-    def process_tile(tile):
+    def process_tile(tile) -> np.ndarray:
         img = np.expand_dims(tile, axis=[0, 3])
         p = NucleiDetectorUnet(tile_size).predict(img)[0, :, :, 0]
+        print(type(p))
         return p > 0.5
 
     # Apply function across chunks
