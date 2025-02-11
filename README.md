@@ -45,7 +45,7 @@ Deploy the ECS cluster with the following terraform command:
         -var venue="dev" \
         -var aws_fg_subnets=<private subnets of the AWS account> \
         -var aws_fg_vpc=<vpc of the AWS account> \
-        -var aws_fg_security_groups  <security group allows incoming request from JPL to port 8786 and port 8787> \
+        -var aws_fg_security_groups  <security group allows incoming request whre the client runs, at JPL, on EC@ or Airflow, to port 8786 and port 8787> \
         -var ecs_task_role <arn of a role allowing to write on cloudwatch>
         -var ecs_task_execution_role <arn of role which can pull image from ECR and standard ECS task Excecution role policy "AmazonECSTaskExecutionRolePolicy">
 
