@@ -16,6 +16,9 @@ RUN git clone https://github.com/jpl-labcas/workflows.git; cd workflows; pip ins
 EXPOSE 8786/tcp
 EXPOSE 8787
 
+ENTRYPOINT ["dask"]
+CMD ["scheduler"]
+
 
 
 
