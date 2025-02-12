@@ -39,7 +39,7 @@ Have a s3 bucket `labcas-infra` for the terraform state.
 Other pre-requisites are:
  - a VPC
  - subnets
- - a security group allowing incoming request whre the client runs, at JPL, on EC@ or Airflow, to port 8786 and port 8787
+ - a security group allowing incoming request whre the client runs, at JPL, on EC2 or Airflow, to port 8786 and port 8787
  - a task role allowing to write on CloudWatch
  - a task execution role which pull image from ECR and standard ECS task Excecution role policy "AmazonECSTaskExecutionRolePolicy"
 
