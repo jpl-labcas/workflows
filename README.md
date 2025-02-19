@@ -14,17 +14,22 @@ Preferably use a virtual environment with python 3.9
 
 ### With Dask on docker
 
+Create certificates:
+
+    cd docker/certs
+    ./generate-certs.sh
+
 Build the docker image:
 
     docker build -f docker/Dockerfile . -t labcas/workflow
 
 Start the scheduler:
 
-    docker run -p 8787:8787 -p 8786:8786 labcas/workflow dask scheduler
+    docker run -p 8787:8787 -p 8786:8786 labcas/workflow scheduler
 
 Start one worker
 
-    docker run -p 8787:8787 -p 8786:8786 labcas/workflow dask worker
+    docker run -p 8787:8787 -p 8786:8786 labcas/workflow worker
 
 
 Start the client, same as in following section
@@ -42,6 +47,7 @@ Other pre-requisites are:
  - a security group allowing incoming request whre the client runs, at JPL, on EC@ or Airflow, to port 8786 and port 8787
  - a task role allowing to write on CloudWatch
  - a task execution role which pull image from ECR and standard ECS task Excecution role policy "AmazonECSTaskExecutionRolePolicy"
+ 
 
 Deploy the ECS cluster with the following terraform command:
 
@@ -50,6 +56,7 @@ Deploy the ECS cluster with the following terraform command:
     terraform apply \
         -var consortium="edrn" \
         -var venue="dev" \
+        -var aws_fg_image=<uri of the docker image deployed on ECR>
         -var aws_fg_subnets=<private subnets of the AWS account> \
         -var aws_fg_vpc=<vpc of the AWS account> \
         -var aws_fg_security_groups  <security group> \

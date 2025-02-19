@@ -1,14 +1,17 @@
+import os
 from labcas.workflow.manager import DataStore
 from labcas.workflow.steps.alphan.process import process_img
-
-# in another terminal
-# from dask.distributed import Client
-# dask_client = Client(processes=False, threads_per_worker=4,
-#            n_workers=1, memory_limit='2GB')
-# dask_client
-
 from distributed import Client
-client = Client('127.0.0.1:8786')
+from distributed.security import Security
+
+sec = Security(
+    tls_ca_file=os.getenv("DASK_TLS_CA"),
+    tls_client_cert=os.getenv("DASK_TLS_CERT"),
+    tls_client_key=os.getenv("DASK_TLS_KEY"),
+    require_encryption=True
+)
+
+client = Client('tls://127.0.0.1:8786')
 
 
 def process_collection(bucket_name, in_prefix, out_prefix, fun, kwargs):

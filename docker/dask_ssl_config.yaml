@@ -1,0 +1,17 @@
+distributed:
+  scheduler:
+    dashboard:
+      tls:
+        ca-file: /etc/dask/root-ca.pem
+        key: /etc/dask/node1-key.pem
+        cert: /etc/dask/node1.pem
+  comm:
+    default-scheme: tls
+    tls:
+      ca-file: /etc/dask/root-ca.pem
+      scheduler:
+        key: /etc/dask/node1-key.pem
+        cert: /etc/dask/node1.pem
+      worker:
+        key: /etc/dask/node1-key.pem
+        cert: /etc/dask/node1.pem
