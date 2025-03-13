@@ -68,7 +68,6 @@ def process_img(datastore: DataStore, key: str, tile_size=64):
     def process_tile(tile) -> np.ndarray:
         img = np.expand_dims(tile, axis=[0, 3])
         p = NucleiDetectorUnet(tile_size).predict(img)[0, :, :, 0]
-        print(type(p))
         return p > 0.5
 
     # Apply function across chunks

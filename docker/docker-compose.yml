@@ -1,0 +1,28 @@
+version: "3.9"
+
+services:
+  dask-scheduler:
+    image: labcas/workflow
+    ports:
+      - "8786:8786"
+      - "8787:8787"
+    networks:
+      - labcas
+
+  dask-worker:
+    image: labcas/workflow
+    command: ["worker", "tcp://dask-scheduler:8786", "--worker-port", "9000:9100"]
+    networks:
+      - labcas
+    depends_on:
+      - dask-scheduler
+
+networks:
+  labcas:
+    driver: bridge
+    labels:
+      org.label-schema.name: LabCas Dask network
+      org.label-schema.description: Internal bridge network for Dask
+
+
+

@@ -25,11 +25,12 @@ Build the docker image:
 
 Start the scheduler:
 
-    docker run -p 8787:8787 -p 8786:8786 labcas/workflow scheduler
+    docker network create dask
+    docker run --network dask -p 8787:8787 -p 8786:8786 labcas/workflow scheduler
 
 Start one worker
 
-    docker run -p 8787:8787 -p 8786:8786 labcas/workflow worker
+    docker run  --network dask -p 8786:8786 labcas/workflow worker 
 
 
 Start the client, same as in following section
@@ -80,5 +81,5 @@ Start the dask cluster
 Run the processing
 
 
-    python ./src/labcas/manager/main.py
+    python ./src/labcas/workflow/manager/main.py
 

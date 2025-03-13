@@ -6,7 +6,7 @@ from skimage.measure import label, find_contours, regionprops_table
 from skimage.morphology import disk, remove_small_objects, opening, remove_small_holes
 from skimage.segmentation import watershed, expand_labels
 import matplotlib
-matplotlib.use('TkAgg')
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 from skimage.io import imread
