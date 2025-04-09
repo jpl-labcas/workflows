@@ -1,10 +1,10 @@
-ARG python_version=3.9
+ARG python_version=3.11
 FROM python:${python_version}-bullseye
 
 WORKDIR /app
 
 # TODO install from pypi when ready
-RUN git clone https://github.com/jpl-labcas/workflows.git; cd workflows; pip install '.[ml_worker]'
+RUN pip install 'labcas.workflow[ml_worker]==0.1.5'
 # For the dashboard to run
 RUN pip install "bokeh!=3.0.*,>=2.4.2"
 

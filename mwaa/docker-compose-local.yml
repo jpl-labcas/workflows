@@ -1,0 +1,71 @@
+version: "3.7"
+services:
+  postgres:
+    image: postgres:13-alpine
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    volumes:
+      - "${PWD}/db-data:/var/lib/postgresql/data"
+    networks:
+      - labcas
+
+
+  local-runner:
+    image: amazon/mwaa-local:2_10_3
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      - LOAD_EX=n
+      - EXECUTOR=Local
+      - AWS_PROFILE=saml-pub
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    volumes:
+      - "${PWD}/dags:/usr/local/airflow/dags"
+      - "${PWD}/plugins:/usr/local/airflow/plugins"
+      - "${PWD}/requirements:/usr/local/airflow/requirements"
+      - "${PWD}/startup_script:/usr/local/airflow/startup"
+      - "${PWD}/.aws:/usr/local/airflow/.aws"
+    ports:
+      - "8080:8080"
+    command: local-runner
+    healthcheck:
+      test: ["CMD-SHELL", "[ -f /usr/local/airflow/airflow-webserver.pid ]"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    env_file:
+      - ./config/.env.localrunner
+    networks:
+      - labcas
+
+
+  dask-scheduler:
+    image: labcas/workflow
+    command: scheduler
+    networks:
+      - labcas
+
+
+  dask-worker:
+    image: labcas/workflow
+    command: worker tcp://dask-scheduler:8786
+    networks:
+      - labcas
+
+
+networks:
+  labcas:
+    driver: bridge
+    labels:
+      org.label-schema.name: Labcas network shared with dask
+      org.label-schema.description: Internal bridge network for interprocess communication of services for Labcas

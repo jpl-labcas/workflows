@@ -3,7 +3,6 @@ import os
 import io
 import logging
 import tempfile
-from keras.models import load_model
 from skimage.exposure import rescale_intensity, equalize_adapthist, adjust_sigmoid
 from skimage.util import img_as_bool, view_as_windows, img_as_ubyte
 from skimage.io import imread, imsave
@@ -23,11 +22,12 @@ logger = logging.getLogger(__name__)
 
 class NucleiDetectorUnet:
     def __init__(self, tile_size):
+        from keras.models import load_model
         model_dir = os.path.join(
             os.path.dirname(__file__),
             'models'
         )
-        self.model = load_model(os.path.join(model_dir, f'unet_{tile_size}.h5'))
+        self.model = load_model(os.path.join(model_dir, f'unet_{tile_size}.raw'))
         self.logger = logger
         self.logger.info('model loaded')
 

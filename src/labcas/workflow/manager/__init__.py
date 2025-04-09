@@ -1,2 +1,2 @@
 from .datastore import DataStore
-from main import process_collection
+from .process_collection import process_collection
