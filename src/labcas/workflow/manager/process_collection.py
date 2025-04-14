@@ -1,7 +1,4 @@
-import os
 from labcas.workflow.manager import DataStore
-from labcas.workflow.steps.alphan.process import process_img
-
 
 def process_collection(bucket_name, in_prefix, out_prefix, fun, kwargs):
     # Use a breakpoint in the code line below to debug your script.

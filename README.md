@@ -21,13 +21,6 @@ With python 3.11, preferably use a virtual environment
 
     pip install -e '.[dev]'
 
-### Start local dask cluster
-
-    docker build -f docker/Dockerfile . -t labcas/workflow
-    docker network create dask
-    docker run --network dask -p 8787:8787 -p 8786:8786 labcas/workflow scheduler
-    docker run --network dask -p 8787:8787 -p 8786:8786 labcas/workflow worker tcp://<scheduler ip>:8786
-
 ### Set AWS connection
 
     ./aws-login.darwin.amd64
@@ -41,10 +34,11 @@ With python 3.11, preferably use a virtual environment
 
 Upgrade the version in file "src/labcas/workflow/VERSION.txt"
 
-Publish the package on pypi
+Publish the package on pypi:
 
     pip install build
     pip install twine
+    rm dist/*
     python -m build
     twine upload dist/*
    
@@ -54,6 +48,7 @@ Publish the package on pypi
 
 ### Build the Dask worker image
 
+Update the labcas.workflow dependency version as needed in `docker/Dockerfile`, then:
 
     docker build -f docker/Dockerfile . -t labcas/workflow
 
@@ -66,6 +61,8 @@ Use repository https://github.com/aws/aws-mwaa-local-runner, clone it, then:
 Then from your local labcas_workflow repository:
 
     cd mwaa
+
+As needed, update requirements in `requirements` directory and dags in `dags` directory.
 
 ## Update the AWS credentials
 
