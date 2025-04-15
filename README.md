@@ -28,7 +28,26 @@ With python 3.11, preferably use a virtual environment
 
 ### Run/Test the client
 
+#### Without a dask cluster:
+
     python src/labcas/workflow/manager/main.py
+
+
+#### With a local dask cluster
+
+Start the scheduler:
+
+    docker network create dask
+    docker run --network dask -p 8787:8787 -p 8786:8786 labcas/workflow scheduler
+
+Start one worker
+
+    docker run  --network dask -p 8786:8786 labcas/workflow worker 
+
+
+Start the client, same as in previous section but add the `tcp://localhost:8787` argument to the dask client in the `main.py` script 
+
+
 
 ### Deploy package on pypi
 
@@ -64,22 +83,22 @@ Then from your local labcas_workflow repository:
 
 As needed, update requirements in `requirements` directory and dags in `dags` directory.
 
-## Update the AWS credentials
+### Update the AWS credentials
 
     aws-login.darwin.amd64
     cp -r ~/.aws .
 
-## Launch the server
+### Launch the services
  
     docker compose -f docker-compose-local.yml up
 
 Test the server on http://localhost:8080 , login admin/test
 
-## Stop 
+### Stop 
 
     Ctrl^C
 
-## Stop and re-initialize local volumes
+### Stop and re-initialize local volumes
 
     docker compose  -f ./docker/docker-compose-local.yml down -v
 
@@ -87,11 +106,11 @@ Test the server on http://localhost:8080 , login admin/test
 
 See the console on http://localhost:8080, admin/test
 
-## Test the requirement.txt files
+### Test the requirement.txt files
  
     ./mwaa-local-env test-requirements
 
-## Debug the workflow import
+### Debug the workflow import
 
     docker container ls
 
@@ -106,20 +125,15 @@ And, in the bash prompt:
     cd dags
     python3 -c "import nebraska"
 
-Start the scheduler:
 
-    docker network create dask
-    docker run --network dask -p 8787:8787 -p 8786:8786 labcas/workflow scheduler
+## System administrators
 
-Start one worker
+The deployment requires:
+- one ECS cluster for the dask cluster.
+- Optionally, an EC2 instance client of the Dask cluster
+- One managed Airflow
 
-    docker run  --network dask -p 8786:8786 labcas/workflow worker 
-
-
-Start the client, same as in following section
-
-
-### With dask on ECS
+### dask on ECS
 
 Deploy the image created in the previous section on ECR
 
@@ -147,32 +161,45 @@ Deploy the ECS cluster with the following terraform command:
         -var ecs_task_role <arn of a task role>
         -var ecs_task_execution_role <arn of task execution role>
 
-## Run
+### Test the dask cluster
 
-Set you local AWS credentials to access the data
+#### Connect to an EC2 instance, client of the Dask cluster
 
 
-    ./aws-login.darwin.amd64
+    ssh {ip of the EC2 instance}
+    aws-login
     export AWS_PROFILE=saml-pub
+    git clone {this repository}
+    cd workflows
+    source venv/bin/activate
+    python src/labcas/workflow/manager/main.py
 
 
-Start the dask cluster
+To See Dask Dashboard, open SSH tunnels:
+
+    ssh -L 8787:{dask scheduler ip on ECS}:8787 {username}@{ec2 instance ip}
+    ssh -L 8787:{dask scheduler ip on ECS}:8787 {username}@{ec2 instance ip}
+
+in browser: http://localhost:8787
 
 
-Run the processing
+### Apache Airflow
 
+An AWS managed Airflow is deployed in version 2.10.3.
 
-    python ./src/labcas/workflow/manager/main.py
+The managed Airflow is authorized to read and write in the data bucket.
 
-Publish the package on pypi
+The managed Airflow is authorized to access the ECS security group.
 
-    pip install build
-    pip install twine
-    python -m build
-    twine upload dist/*
+It uses s3 bucket {labcas_airflow}.
 
+Upload to S3 the `./mwaa/requirements/requirements.txt` file to the bucket in: `s3:/{labas_airflow}/requirements/`
 
-# Apache Airflow
+Upload to S3 the `./mwaa/dags/nebraska.py` file to the bucket in: `s3:/{labas_airflow}/dags/`
+
+Update the version of the `requirements.txt` file in the Airflow configuration console.
+
+Test, go the the Airflow web console, and trigger the nebraska dag.
 
 
 
