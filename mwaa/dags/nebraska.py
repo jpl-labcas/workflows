@@ -9,7 +9,7 @@ from labcas.workflow.steps.alphan.process import process_img
 default_args = {
     "dask_scheduler": "tcp://dask-scheduler:8786",
     "bucket": "edrn-bucket",
-    "in_prefix": 'nebraska_images',
+    "in_prefix": 'nebraska_images/',
     "out_prefix": 'nebraska_images_nuclei',
 }
 
