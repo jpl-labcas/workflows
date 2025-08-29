@@ -23,6 +23,7 @@ if __name__ == '__main__':
     process_collection(
         'edrn-bucket',
         'nebraska_images/',
+        'edrn-bucket',
         'nebraska_images_nuclei/',
         process_img,
         dict(tile_size=64)

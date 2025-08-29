@@ -100,7 +100,7 @@ Test the server on http://localhost:8080 , login admin/test
 
 ### Stop and re-initialize local volumes
 
-    docker compose  -f ./docker/docker-compose-local.yml down -v
+    docker compose  -f ./docker-compose-local.yml down -v
 
     
 
@@ -200,6 +200,9 @@ Upload to S3 the `./mwaa/dags/nebraska.py` file to the bucket in: `s3:/{labas_ai
 Update the version of the `requirements.txt` file in the Airflow configuration console.
 
 Test, go the the Airflow web console, and trigger the nebraska dag.
+
+
+
 
 
 

@@ -43,9 +43,9 @@ def decode_img(data):
     return imread(data)
 
 
-def process_img(datastore: DataStore, key: str, tile_size=64):
+def process_img(in_datastore: DataStore, out_datastore: DataStore, key: str, tile_size=64, csv=True):
     # Read the file content
-    img_data = datastore.get_input_content(key, decode_img)
+    img_data = in_datastore.get_input_content(key, decode_img)
 
     print('rescaling intensity')
     im = rescale_intensity(1.0 * img_data)
@@ -91,31 +91,32 @@ def process_img(datastore: DataStore, key: str, tile_size=64):
     name = in_filename.split(".")[0]
     ext = in_filename.split(".")[1]
     bw_filename = name + "_bw." + ext
-    csv_filename = name + ".csv"
     contour_filename = name + "_ov." + ext
 
     print('saving BW image.')
     temp_bw_file = tempfile.NamedTemporaryFile(suffix='.png')
     imsave(temp_bw_file.name, img_as_ubyte(bw), check_contrast=False)
     temp_bw_file.seek(0)
-    datastore.write_output(bw_filename, temp_bw_file)
+    out_datastore.write_output(bw_filename, temp_bw_file)
 
     print('plotting contours')
     temp_contours_file = tempfile.NamedTemporaryFile(suffix='.png')
     plot_contours(bw, im, temp_contours_file)
     temp_contours_file.seek(0)
-    datastore.write_output(contour_filename, temp_contours_file)
+    out_datastore.write_output(contour_filename, temp_contours_file)
 
-    print('extracting region props')
-    image_df = extract_regionprops(img_data, temp_bw_file)
-    csv_buffer = io.StringIO()
-    image_df.to_csv(csv_buffer)
-    datastore.write_output(csv_filename, csv_buffer.getvalue(), content_type="text/csv")
+    if csv:
+        print('extracting region props')
+        csv_filename = name + ".csv"
+        image_df = extract_regionprops(img_data, temp_bw_file)
+        csv_buffer = io.StringIO()
+        image_df.to_csv(csv_buffer)
+        out_datastore.write_output(csv_filename, csv_buffer.getvalue(), content_type="text/csv")
 
 
-def process_img_local(client: Client, datastore: DataStore, key: str, tile_size=64):
+def process_img_local(client: Client, in_datastore: DataStore, out_datastore: DataStore, key: str, tile_size=64, ):
     # Read the file content
-    img_data = datastore.get_input_content(key, decode_img)
+    img_data = in_datastore.get_input_content(key, decode_img)
 
     print('rescaling intensity')
     im = rescale_intensity(1.0 * img_data)
@@ -165,16 +166,16 @@ def process_img_local(client: Client, datastore: DataStore, key: str, tile_size=
     temp_bw_file = tempfile.NamedTemporaryFile(suffix='.png')
     imsave(temp_bw_file.name, img_as_ubyte(bw), check_contrast=False)
     temp_bw_file.seek(0)
-    datastore.write_output(bw_filename, temp_bw_file)
+    out_datastore.write_output(bw_filename, temp_bw_file)
 
     print('plotting contours')
     temp_contours_file = tempfile.NamedTemporaryFile(suffix='.png')
     plot_contours(bw, im, temp_contours_file)
     temp_contours_file.seek(0)
-    datastore.write_output(contour_filename, temp_contours_file)
+    out_datastore.write_output(contour_filename, temp_contours_file)
 
     print('extracting region props')
     image_df = extract_regionprops(img_data, temp_bw_file)
     csv_buffer = io.StringIO()
     image_df.to_csv(csv_buffer)
-    datastore.write_output(csv_filename, csv_buffer.getvalue(), content_type="text/csv")
+    out_datastore.write_output(csv_filename, csv_buffer.getvalue(), content_type="text/csv")
