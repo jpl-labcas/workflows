@@ -18,6 +18,20 @@
 - a venue (dev or prod)
 - a terraform backend s3 bucket, e.g. `jpl_nist-prod-labcas-admin`, update file provider.tf with your value. This is used to save the terraform states.
 
+You can create a var file with a content like:
+
+    aws_region="us-west-1"
+    aws_profile="my-profile"
+    tenant="nist_jpl"
+    venue="dev"
+    operator="john.doe@gmail.com"
+    aws_fg_image="TBD"
+    ecs_task_execution_role="TBD"
+    ecs_task_role="TBD"
+    aws_fg_security_groups="TBD"
+    aws_fg_subnets="TBD"
+    aws_fg_vpc="TBD"
+
 
 ## Deployment
 
@@ -31,12 +45,12 @@
 We need S3 bucket to manage the storage:
 
     cd terraform/buckets
-    terraform apply
+    terraform apply -var-file my_variables.tf
 
 ### Create or update the Machine Learning Cluster
 
     cd terraform/ml_cluster
-    terraform apply
+    terraform apply -var-file my_variables.tf
 
 
 ### Create the workflow engine
