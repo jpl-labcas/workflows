@@ -13,6 +13,9 @@ terraform {
   # See https://stackoverflow.com/questions/63048738/how-to-declare-variables-for-s3-backend-in-terraform
   #
   backend "s3" {
-    bucket = "labcas-infra"
+    bucket = "nist_jpl-prod-labcas-admin"
+    key    = "labcas.tfstate"
+    region = "us-west-2"
   }
 }
+

@@ -1,11 +1,15 @@
-variable "consortium" {
-  description = "consortium"
+variable "tenant" {
+  description = "tenant"
   default="edrn"
 }
 
 variable "venue" {
   description = "Deployment venue (prod, test, dev)"
   default = "dev"
+}
+
+variable "operator" {
+  description = "email of the person running the script"
 }
 
 variable "aws_region" {
@@ -16,20 +20,6 @@ variable "aws_region" {
 variable "aws_profile" {
   description = "AWS profile"
   default = "default"
-}
-
-variable "aws_fg_vpc" {
-  description = "AWS VPC for Fargate"
-}
-
-variable "aws_fg_security_groups" {
-  description = "AWS Security groups for Fargate"
-  type = list(string)
-}
-
-variable "aws_fg_subnets" {
-  description = "AWS Subnets for Fargate"
-  type = list(string)
 }
 
 variable "ecs_task_role" {
@@ -44,12 +34,11 @@ variable "aws_fg_image" {
   description = "AWS image name for Fargate"
 }
 
-variable "aws_fg_cpu_units" {
-  description = "CPU Units for fargate"
-  default = 256
+variable "aws_fg_subnets" {
+  description = "AWS private subnets"
 }
 
-variable "aws_fg_ram_units" {
-  description = "RAM Units for Fargate"
-  default = 512
+variable "aws_fg_vpc" {
+  description = "AWS VPC"
 }
+
