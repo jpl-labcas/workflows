@@ -24,18 +24,6 @@ resource "aws_cloudwatch_log_group" "labcas-workflow-dask-ecs-scheduler-log-grou
   }
 }
 
-# Log groups hold logs from our app.
-resource "aws_cloudwatch_log_group" "labcas-workflow-dask-ecs-worker-log-group" {
-  name = "/ecs/labcas-${var.tenant}-${var.venue}-workflow-dask-worker-task"
-
-  tags = {
-    tenant = var.tenant,
-    venue = var.venue,
-    application = "labcas",
-    component = "workflow",
-    createdBy : var.operator
-  }
-}
 
 
 # The task definition for dask scheduler.
