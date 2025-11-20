@@ -26,13 +26,13 @@ jobs:
 
       - name: Build Sphinx documentation
         working-directory: docs
-        run: sphinx-build -b html source .
+        run: sphinx-build -b html docs site
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs
+          publish_dir: site
           publish_branch: gh-pages
           force_orphan: true
 
