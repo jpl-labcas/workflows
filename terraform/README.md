@@ -16,7 +16,7 @@
 
 - a tenant (ERDN or JPL_NIST or NIST)
 - a venue (dev or prod)
-- a terraform backend s3 bucket, e.g. `jpl_nist-prod-labcas-admin`, update file provider.tf with your value. This is used to save the terraform states.
+- a terraform backend s3 bucket, e.g. `jpl_nist-prod-terraform-state`, update file provider.tf with your value. This is used to save the terraform states.
 
 You can create a var file with a content like:
 
@@ -38,19 +38,26 @@ You can create a var file with a content like:
 ### Terraform initialization
 
     cd terraform
-    terraform init
+    terraform init -backend-config=../../environments/your_env/terraform.tf
+
  
 ### Create or update the storage
+
+NOT TESTED YET
 
 We need S3 bucket to manage the storage:
 
     cd terraform/buckets
     terraform apply -var-file my_variables.tf
 
-### Create or update the Machine Learning Cluster
+### Create or update the Machine Learning Cluster Application
 
-    cd terraform/ml_cluster
-    terraform apply -var-file my_variables.tf
+Only creates the task definitions and the ECS service.
+The ECS cluster and its services needs to be created manually for now.
+
+    cd terraform/application/ml_cluster/
+    terraform plan -var-file=../../environments/your_env/terraform.tfvars
+    terraform apply -var-file=../../environments/your_env/terraform.tfvars
 
 
 ### Create the workflow engine

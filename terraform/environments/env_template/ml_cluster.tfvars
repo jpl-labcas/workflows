@@ -1,0 +1,8 @@
+aws_region="TBD"
+aws_profile="TBD"
+tenant="TBD"
+venue="TBD"
+operator="TBD"
+container_image="TBD"
+ecs_task_execution_role="TBD"
+ecs_task_role="TBD"
