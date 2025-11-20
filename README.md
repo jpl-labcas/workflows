@@ -79,7 +79,7 @@ Publish the documentation:
     git commit -a -m "update docs"
     git push
 
-The documentation is publicly hosted on https://jpl-labcas.github.io/workflows/
+The documentation is publicly hosted on [LabCas Workflow documentation](https://jpl-labcas.github.io/workflows/)
 
 
 
@@ -243,16 +243,3 @@ Upload to S3 the `./mwaa/dags/nebraska.py` file to the bucket in: `s3:/{labas_ai
 Update the version of the `requirements.txt` file in the Airflow configuration console.
 
 Test, go the the Airflow web console, and trigger the nebraska dag.
-
-
-
-
-
-
-
-
-
-
-
-
-
