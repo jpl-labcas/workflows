@@ -60,6 +60,21 @@ Publish the package on pypi:
     rm dist/*
     python -m build
     twine upload dist/*
+
+### Update documentation
+
+The documentation is built with Sphinx.
+
+The sources are in the `docs/source` directory.
+
+To built the documentation:
+
+    cd docs
+    sphinx-build -b html source .   
+    git commit -a -m "update docs"
+    git push
+
+
    
 
 
