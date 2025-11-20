@@ -70,12 +70,18 @@ The sources are in the `docs/source` directory.
 To built the documentation:
 
     cd docs
-    sphinx-build -b html source .   
+    sphinx-build -b html source .  
+
+The documentation can be viewed in the browser at `docs/index.html`.
+
+Publish the documentation:
+
     git commit -a -m "update docs"
     git push
 
+The documentation is publicly hosted on https://jpl-labcas.github.io/workflows/
 
-   
+
 
 
 ## Integrators
