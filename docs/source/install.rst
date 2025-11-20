@@ -104,7 +104,7 @@ You will also need to create a **security group** which allows inbound communica
 
 Then you can create the **task definitions** for the dask scheduler and workers:
 
-``rest Follow the terraform guidelines for the task definitions (see :doc:ecs_task_definition_terraform).
+Follow the terraform guidelines for the task definitions (see :doc:`install/ecs_task_definition_terraform`).
 
 Finally, create the **ECS services** for the Dask scheduler and workers using the task definition previously created.
 Optionally the ECS worker service can be set up to use auto-scaling.
