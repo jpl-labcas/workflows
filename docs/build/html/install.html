@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Installation &#8212; LabCas Workflows  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
+window.addEventListener("load", () => mermaid.run());
+</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Configuration" href="configure.html" />
+    <link rel="prev" title="Development" href="develop.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h1>
+<p>This section describes how to install LabCas Workflows on your system.</p>
+<p>LabCas Workflows is meant to be installed on an Amazon Web Service account.
+For development and testing purposes, you can install it on your local machine, see <a class="reference internal" href="develop.html"><span class="doc">develop</span></a></p>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">¶</a></h2>
+<p>What you need to install LabCas Workflows is:</p>
+<ul class="simple">
+<li><p>System administrator support to comply with the security constraints defined by your organization.</p></li>
+<li><p>An AWS account with a VPC and private subnets</p></li>
+</ul>
+<p>Some knowledge of the AWS console and AWS CLI is helpful.</p>
+</section>
+<section id="architecture-overview">
+<h2>Architecture Overview<a class="headerlink" href="#architecture-overview" title="Link to this heading">¶</a></h2>
+<p>The current repository is an umbrella for the 2 main components shown on the right of the following diagram:</p>
+<ul class="simple">
+<li><p>LabCas Workflows</p></li>
+<li><p>Computing resources</p></li>
+</ul>
+<pre  class="mermaid">
+        graph TD
+  subgraph LabCas Core
+    A[UI] --&gt; B[Backend_API]
+    B --&gt; C[(Solr_Database)]
+    B --&gt; D[(Archive_S3_bucket)]
+  end
+  subgraph LabCas Workflows
+    F[RestFul API]
+    G[Workflow_Engine_Airflow]
+    H[(DAG_S3_bucket)]
+    I[(Staging_S3_bucket)]
+    A --&gt; F
+    F --&gt; G
+    G --&gt; H
+    G --&gt; D
+    G --&gt; I
+  end
+  subgraph Computing resources
+    J[Dask_Cluster_on_ECS]
+    K[Other_ECS_Clusters]
+    G --&gt; J
+    G --&gt; K
+  end
+    </pre><p>LabCas Core components are described there:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/jpl-labcas/backend">LabCas backend</a> (API and Solr database):</p></li>
+<li><p>LabCas UI: has multiple versions adapted to different projects.</p></li>
+</ul>
+</section>
+<section id="doing-the-installation">
+<h2>Doing the Installation<a class="headerlink" href="#doing-the-installation" title="Link to this heading">¶</a></h2>
+<section id="storage-setup">
+<h3>Storage Setup<a class="headerlink" href="#storage-setup" title="Link to this heading">¶</a></h3>
+<p>You need 4 S3 buckets:</p>
+<ul class="simple">
+<li><p>Staging bucket: to store data submitted by users or created by workflows</p></li>
+<li><p>Archive bucket: to store data permanently, as loaded into LabCas backend</p></li>
+<li><p>DAG bucket: to store the workflow definitions (DAGs) and related code.</p></li>
+<li><p>Terraform state bucket: to store the terraform state files if you use terraform to do the installation.</p></li>
+</ul>
+<p>You can create these buckets using the AWS console or AWS CLI.</p>
+</section>
+<section id="computing-components-set-up">
+<h3>Computing components set up<a class="headerlink" href="#computing-components-set-up" title="Link to this heading">¶</a></h3>
+<p>Depending on the workflow you want to run, you may need to set up some AWS computing components, such as:</p>
+<ul class="simple">
+<li><p>a Dask scalable cluster on ECS</p></li>
+<li><p>other ECS clusters (To Be Defined)</p></li>
+</ul>
+<section id="dask-scalable-cluster-on-ecs">
+<h4>Dask scalable cluster on ECS<a class="headerlink" href="#dask-scalable-cluster-on-ecs" title="Link to this heading">¶</a></h4>
+<p>You need to create ECS cluster with Fargate launch type, and install Dask on it.</p>
+<p>Create an <strong>ECS cluster</strong> with a Fargate capacity provider.</p>
+<p>Create an <strong>ECR registry</strong> to store the Dask docker image.</p>
+<p>Create the docker image locally as described in the <a class="reference external" href="https://github.com/jpl-labcas/workflows?tab=readme-ov-file#build-the-dask-worker-image">Integrator section</a> of the README file.
+Push it to the ECR registry.</p>
+<p>Create <strong>IAM roles</strong> and policies:</p>
+<ul class="simple">
+<li><p>a task role which allows to 1) read in the s3 bucket where the labcas data is, 2) write to cloudwatch</p></li>
+<li><p>a task execution role with the standard ECS execution policy</p></li>
+</ul>
+<p>You will also need to create a <strong>security group</strong> which allows inbound communication on the port range 8786:9100 (Dask scheduler and worker ports).</p>
+<p>Then you can create the <strong>task definitions</strong> for the dask scheduler and workers:</p>
+<p>Follow the terraform guidelines for the task definitions (see <a class="reference internal" href="install/ecs_task_definition_terraform.html"><span class="doc">Deployment of the ECS task definitions with Terraform</span></a>).</p>
+<p>Finally, create the <strong>ECS services</strong> for the Dask scheduler and workers using the task definition previously created.
+Optionally the ECS worker service can be set up to use auto-scaling.</p>
+</section>
+</section>
+<section id="workflow-engine-setup">
+<h3>Workflow engine setup<a class="headerlink" href="#workflow-engine-setup" title="Link to this heading">¶</a></h3>
+<p>The workflow engine is based on Apache Airflow, running on AWS Managed Workflows for Apache Airflow (MWAA).</p>
+<p>To Be Completed</p>
+</section>
+<section id="the-web-api-setup">
+<h3>The web API setup<a class="headerlink" href="#the-web-api-setup" title="Link to this heading">¶</a></h3>
+<p>The web API is used to trigger workflows nad edit staged metadata.</p>
+<p>To Be Completed</p>
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">LabCas Workflows</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="develop.html">Development</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#architecture-overview">Architecture Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#doing-the-installation">Doing the Installation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configure.html">Configuration</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="develop.html" title="previous chapter">Development</a></li>
+      <li>Next: <a href="configure.html" title="next chapter">Configuration</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Thomas Loubrieu.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.2.6</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/install.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
