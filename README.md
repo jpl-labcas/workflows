@@ -67,17 +67,13 @@ The documentation is built with Sphinx.
 
 The sources are in the `docs/source` directory.
 
-To built the documentation:
+To built the documentation locally, run:
 
-    cd docs
-    sphinx-build -b html source .  
+    sphinx-build -b html docs site  
 
-The documentation can be viewed in the browser at `docs/index.html`.
+The documentation can be viewed in the browser at `site/index.html`.
 
-Publish the documentation:
-
-    git commit -a -m "update docs"
-    git push
+Publish the documentation by pushing the source updates to the `main` branch. A github action will build and publish the documentation.
 
 The documentation is publicly hosted on [LabCas Workflow documentation](https://jpl-labcas.github.io/workflows/)
 
