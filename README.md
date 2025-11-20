@@ -88,6 +88,28 @@ As needed, update requirements in `requirements` directory and dags in `dags` di
     aws-login.darwin.amd64
     cp -r ~/.aws .
 
+### Prepare/Update the solr configuration (optional)
+
+Clone the labcas-backend repository if not already done:
+
+    git clone https://github.com/jpl-labcas/backend
+    
+Set your labcas home in a temporary directory:
+
+    export LABCAS_HOME=/tmp/labcas
+
+
+Build it (you need jdk8 and compatible maven):
+
+    cd backend
+    mvn clean install
+
+Copy the solr generated configuration in our local docker compose environment:
+
+    cp -r /tmp/labcas/solr-home ./solr/confs/
+
+
+
 ### Launch the services
  
     docker compose -f docker-compose-local.yml up
