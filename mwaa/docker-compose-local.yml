@@ -1,4 +1,14 @@
 version: "3.7"
+
+networks:
+  labcas:
+    driver: bridge
+    external: true
+    labels:
+      org.label-schema.name: Labcas network shared with dask
+      org.label-schema.description: Internal bridge network for interprocess communication of services for Labcas
+
+
 services:
   ## AIRFLOW RELATED SERVICES ##
   postgres:
@@ -36,6 +46,8 @@ services:
       - "${PWD}/requirements:/usr/local/airflow/requirements"
       - "${PWD}/startup_script:/usr/local/airflow/startup"
       - "${PWD}/.aws:/usr/local/airflow/.aws"
+      # Mount Docker socket to enable Docker-in-Docker
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "8080:8080"
     command: local-runner
@@ -80,9 +92,3 @@ volumes:
   solr-data:
 
 
-networks:
-  labcas:
-    driver: bridge
-    labels:
-      org.label-schema.name: Labcas network shared with dask
-      org.label-schema.description: Internal bridge network for interprocess communication of services for Labcas

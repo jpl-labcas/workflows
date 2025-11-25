@@ -90,6 +90,46 @@ Update the labcas.workflow dependency version as needed in `docker/Dockerfile`, 
 
 ### Create a managed AirFlow docker image to be run locally
 
+#### Authorize the MWAA to launch local docker containers
+
+Mandatory if you use the DockerOperator, as done in the ingest DAG.
+
+On you lcoal host, get the group for you docker socket interface:
+
+    ls -l /var/run/docker.sock 
+    lrwxr-xr-x  1 root  daemon  39 Nov 19 15:52 /var/run/docker.sock -> /Users/loubrieu/.docker/run/docker.sock
+
+    ls -l /Users/loubrieu/.docker/run/docker.sock
+    srw-rw----  1 loubrieu  staff  0 Nov ...
+
+Here the group we are interested in is `staff`.
+
+Get the group id (on MacOS)
+
+    dscl . -read /Groups/staff PrimaryGroupID
+    PrimaryGroupID: 20
+
+Add that group id in the docker-compose-local.yml file, in the section:
+
+    local-runner:
+      image: amazon/mwaa-local:2_10_3
+      group_add:
+        - 20  # docker group id to enable docker-in-docker
+      ...
+
+Then in the `aws-mwaa-local-runner` repository, update the docker file in `docker/Dockerfile` to add the airflow user to that group:
+
+    RUN groupdel games && groupadd -g 20 staff && usermod -aG staff airflow
+
+(in this case, it was also necessary to delete the existing group `games` with gid 20).
+
+Also, at last, and that might be enough, but I did not test that without the previous configuration:
+In the `docker/scripts/entrypoint.sh` file, add the following line:
+
+    chmod 666 /var/run/docker.sock
+
+#### Create the MWAA local image
+
 Use repository https://github.com/aws/aws-mwaa-local-runner, clone it, then:
 
     ./mwaa-local-env build-image
@@ -102,8 +142,14 @@ As needed, update requirements in `requirements` directory and dags in `dags` di
 
 ### Update the AWS credentials
 
+Optionally, needed if your DAG reads/writes from/to AWS S3 or other AWS services.
+
     aws-login.darwin.amd64
     cp -r ~/.aws .
+
+
+
+
 
 ### Prepare/Update the solr configuration (optional)
 
@@ -128,6 +174,13 @@ Copy the solr generated configuration in our local docker compose environment:
 
 
 ### Launch the services
+
+
+Create the network before, so that it can be accessed from within the mwaa local runner:
+
+    docker network create labcas
+
+Launch the services (solr, mwaa local runner, dask services):
  
     docker compose -f docker-compose-local.yml up
 
@@ -145,11 +198,17 @@ Test the server on http://localhost:8080 , login admin/test
 
 See the console on http://localhost:8080, admin/test
 
-### Test the requirement.txt files
+### Test the requirements.txt files
+
+In the `aws-mwaa-local-runner` repository, run
  
     ./mwaa-local-env test-requirements
 
+This will test the requirements.txt files in the `requirements` directory.
+
 ### Debug the workflow import
+
+(docker compose should be running)
 
     docker container ls
 

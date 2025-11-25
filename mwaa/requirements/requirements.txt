@@ -1,4 +1,4 @@
 #--constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.10.3/constraints-3.11.txt"
 apache-airflow-providers-amazon==9.0.0
+apache-airflow-providers-docker==3.10.0
 labcas.workflow==0.1.12
-

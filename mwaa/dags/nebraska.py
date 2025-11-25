@@ -1,7 +1,6 @@
 from airflow.decorators import dag
 from airflow.decorators import task
 from airflow.models import DagRun
-from airflow.serialization.pydantic import dag_run
 from airflow.utils.dates import days_ago
 from airflow.models.param import Param
 from distributed import Client

@@ -14,7 +14,7 @@ Steps
 
    .. code-block:: bash
 
-      git clone https://github.com/jpl-labcas/workflows.git
+       git clone https://github.com/jpl-labcas/workflows.git
 
 2. Create an environment directory from the provided template:
 
