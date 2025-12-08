@@ -97,7 +97,7 @@ Push it to the ECR registry.
 
 Create **IAM roles** and policies:
 
-* a task role which allows to 1) read in the s3 bucket where the labcas data is, 2) write to cloudwatch
+* a task role which allows to 1) read in the s3 bucket where the Labcas data is, 2) write to cloudwatch
 * a task execution role with the standard ECS execution policy
 
 You will also need to create a **security group** which allows inbound communication on the port range 8786:9100 (Dask scheduler and worker ports).
@@ -118,11 +118,98 @@ Workflow engine setup
 
 The workflow engine is based on Apache Airflow, running on AWS Managed Workflows for Apache Airflow (MWAA).
 
-To Be Completed
+In the AWS Web Console create a new MWAA environment.
+
+Select the **bucket** created previously for DAGs.
+
+Select the **VPC and private subnets** where the MWAA environment will run.
+
+Create a **security group** which allows outbound access to the internet and inbound access limited to port 443, open to the network of the Admin users who will use the Airflow web interface for advanced monitoring and debugging.
+
+Select a **class** which fits your expected workload. mw1.micro is a good starting point for testing.
+
+Configure the **monitoring** to have workers, web server, DAG processing and the scheduler logs sent to CloudWatch.
+
+Finally, create an **IAM execution role** for the MWAA environment with the following policy attached (replace the placeholders with your actual resource names):
+
+
+.. code-block:: json
+
+    {
+        "Statement": [
+        {
+            "Action": "airflow:PublishMetrics",
+            "Effect": "Allow",
+            "Resource": "<<your MWAA environment ARN>>"
+        },
+        {
+            "Action": [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:s3:::<<DAG bucket name>>",
+                "arn:aws:s3:::<<DAG bucket name>>/*",
+                "arn:aws:s3:::<<LabCas archive bucket name>>",
+                "arn:aws:s3:::<<LabCas archive bucket name>>/*"
+            ]
+        },
+        {
+            "Action": [
+                "s3:DeleteObject",
+                "s3:GetObject",
+                "s3:ListBucket",
+                "s3:PutObject"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "arn:aws:s3:::<<LabCas Staging bucket name>>",
+                "arn:aws:s3:::<<LabCas Staging bucket name>>/*"
+
+            ]
+        },
+        {
+            "Action": [
+                "logs:CreateLogStream",
+                "logs:CreateLogGroup",
+                "logs:PutLogEvents",
+                "logs:GetLogEvents",
+                "logs:GetLogRecord",
+                "logs:GetLogGroupFields",
+                "logs:GetQueryResults"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "<<common ARN prefix for the Cloudwatch log groups being used>>*"
+            ]
+        },
+        {
+            "Action": [
+                "logs:DescribeLogGroups"
+            ],
+            "Effect": "Allow",
+            "Resource": [
+                "*"
+            ]
+        }
+    ],
+    "Version": "2012-10-17"
+    }
+
+
+Create the MWAA environment and open the Airflow UI to verify that everything is working.
+
+You can now add your workflows (DAGs) to the DAG S3 bucket (see configuration manual).
+
+
 
 The web API setup
 -----------------------
 
-The web API is used to trigger workflows nad edit staged metadata.
+The web API is used to trigger workflows and edit staged metadata.
+
+Create an API Gateway
 
 To Be Completed

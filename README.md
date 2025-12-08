@@ -12,7 +12,7 @@ Depending on what you do, there are multiple ways of running a labcase workflow:
 
 ## Developers
 
-The tasks of the workflow run independently from Airflow. TODO: integrate to the airflow python API.
+To run tasks locally, independently from the workflow engine, AirFlow.
 
 ### Install
 
