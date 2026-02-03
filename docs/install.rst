@@ -40,6 +40,7 @@ The current repository is an umbrella for the 2 main components shown on the rig
        I[(Staging_S3_bucket)]
        A --> F
        F --> G
+       F --> I
        G --> H
        G --> D
        G --> I
@@ -210,6 +211,4 @@ The web API setup
 
 The web API is used to trigger workflows and edit staged metadata.
 
-Create an API Gateway
-
-To Be Completed
+This instruction on how to deploy it :wqcan be found in the `web API documentation <https://jpl-labcas.github.io/workflow-api/install.html>`_.
