@@ -144,3 +144,9 @@ override.tf.json
 .terraformrc
 terraform.rc
 
+# Local MWAA files
+mwaa/.aws/*
+mwaa/db-data/*
+
+# Vscode
+.vscode/*
