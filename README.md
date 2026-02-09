@@ -171,7 +171,14 @@ Copy the solr generated configuration in our local docker compose environment:
 
     cp -r /tmp/labcas/solr-home ./solr/confs/
 
+### Configure Environment Variables
 
+The following environment variables will need to be set in order for certain DAGs to function
+
+- `LABCAS_LOCAL_DATA_LAKE`
+  - Path to Local Directory acting as the Ingest Data Lake
+- `LABCAS_LOCAL_DATA_STAGE`
+  - Path to Local Directory acting as the Ingest Data Stage
 
 ### Launch the services
 

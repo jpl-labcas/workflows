@@ -36,6 +36,10 @@ services:
       - LOAD_EX=n
       - EXECUTOR=Local
       - AWS_PROFILE=saml-pub
+      # Local Source Mount paths for ingest DAG
+      - "AIRFLOW_VAR_DATA_LAKE_HOST_PATH=${LABCAS_LOCAL_DATA_LAKE}"
+      - "AIRFLOW_VAR_DATA_STAGE_HOST_PATH=${LABCAS_LOCAL_DATA_STAGE}"
+
     logging:
       options:
         max-size: 10m
