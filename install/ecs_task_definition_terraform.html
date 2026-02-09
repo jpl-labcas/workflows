@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Deployment of the ECS task definitions with Terraform &#8212; LabCas Workflows  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="deployment-of-the-ecs-task-definitions-with-terraform">
+<h1>Deployment of the ECS task definitions with Terraform<a class="headerlink" href="#deployment-of-the-ecs-task-definitions-with-terraform" title="Link to this heading">¶</a></h1>
+<p>You can use Terraform to deploy the ECS task definitions needed for the Dask cluster.</p>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading">¶</a></h2>
+<p>You need to have Terraform installed and configured with your AWS credentials.</p>
+</section>
+<section id="steps">
+<h2>Steps<a class="headerlink" href="#steps" title="Link to this heading">¶</a></h2>
+<ol class="arabic">
+<li><p>Clone the LabCas workflows repository:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/jpl-labcas/workflows.git
+</pre></div>
+</div>
+</li>
+<li><p>Create an environment directory from the provided template:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cp<span class="w"> </span>-r<span class="w"> </span>workflows/terraform/environments/env_template<span class="w"> </span>workflows/terraform/environments/your_env_name
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Edit the <cite>ml_cluster.tfvars</cite> file in your new environment directory to set your AWS region, VPC ID, subnet IDs, ECS cluster name, task CPU and memory, and desired count of tasks:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>region           = &quot;your-aws-region&quot;
+vpc_id           = &quot;your-vpc-id&quot;
+subnet_ids       = [&quot;subnet-id-1&quot;, &quot;subnet-id-2&quot;]
+ecs_cluster_name = &quot;your-ecs-cluster-name&quot;
+task_cpu         = &quot;512&quot;
+task_memory      = &quot;1024&quot;
+desired_count    = 2
+</pre></div>
+</div>
+</li>
+<li><p>Edit the <cite>terraform.tfvars</cite> file in the Terraform directory specify the backend configuration for storing the Terraform state.</p></li>
+<li><p>Navigate to the Terraform directory for ECS task definitions:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>workflows/terraform/application/ml_cluster
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Initialize Terraform:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>terraform<span class="w"> </span>init<span class="w"> </span>-backend-config<span class="o">=</span>../../environments/your_env_name/terraform.tfvars
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Review the Terraform plan:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>terraform<span class="w"> </span>plan<span class="w"> </span>-var-file<span class="o">=</span>../../environments/your_env_name/ml_cluster.tfvars
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Apply the Terraform configuration to create the ECS task definitions:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>terraform<span class="w"> </span>apply<span class="w"> </span>-var-file<span class="o">=</span>../../environments/your_env_name/ml_cluster.tfvars
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p>Confirm the apply action when prompted.</p></li>
+</ol>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">LabCas Workflows</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../develop.html">Development</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../configure.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../use.html">Usage</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Thomas Loubrieu.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/install/ecs_task_definition_terraform.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
