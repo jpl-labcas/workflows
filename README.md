@@ -146,6 +146,7 @@ Optionally, needed if your DAG reads/writes from/to AWS S3 or other AWS services
 
     aws-login.darwin.amd64
     cp -r ~/.aws .
+    eval $(aws configure export-credentials --profile saml-pub --format env)
 
 
 
