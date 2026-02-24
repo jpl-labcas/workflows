@@ -8,16 +8,24 @@ from airflow.models.param import Param
 
 # Mount points can't be templated, must be statically loaded
 
+
 DEFAULT_DATA_LAKE_HOST_PATH = '/labcas_local'
 DEFAULT_DATA_STAGE_HOST_PATH = '/labcas_stage'
 DEFAULT_DATA_STAGE_CONTAINER_PATH = '/data_stage'
 
+# Path to local directory where the data archive resides
+# not used for this dag
 DATA_LAKE_HOST_PATH = os.getenv('AIRFLOW_VAR_DATA_LAKE_HOST_PATH', DEFAULT_DATA_LAKE_HOST_PATH)
+
+# Path to local directory to serve as the data staging area. The publish container will copy S3
+# buckets to this location.
 DATA_STAGE_HOST_PATH = os.getenv('AIRFLOW_VAR_DATA_STAGE_HOST_PATH', DEFAULT_DATA_STAGE_HOST_PATH)
 
 DEFAULT_SOLR_URL = "http://solr:8983/solr/"
 DEFAULT_USERNAME = "thomas"
 DEFAULT_PUBLISH_ARGS = "--collection Autoantibody_Biomarkers --steps headers hash crawl updown compare publish"
+
+# S3 Bucket URI containing the collections to be ingested
 DEFAULT_COLLECTION_ARCHIVE_BUCKET_URI="s3://edrn-labcas/archive"
 DEFAULT_COLLECTION="Autoantibody_Biomarkers"
 
@@ -78,13 +86,13 @@ with DAG(
     },
 ) as dag:
     publish_task = DockerOperator(
-        task_id='publish_task',
-        image='labcas/publish:aws-latest',
+        task_id='publish_task_aws',
+        image='labcas/publish:aws-latest', # Use the aws version, not local
         network_mode='labcas',
         api_version='auto',
         auto_remove=True,
         command="{{ params.publish_args }}",  # Override CMD with publish_args param
-        docker_url='unix://var/run/docker.sock',
+        docker_url='unix://var/run/docker.sock', # This is a mounted through a bind volume
         mounts = [
             Mount(target="/data_lake", source=DATA_LAKE_HOST_PATH, type='bind'),
         ],
@@ -92,9 +100,9 @@ with DAG(
             'solr': "{{ params.solr_url }}",
             'username': "{{ params.username }}",
             'COLLECTION_ARCHIVE_BUCKET_URI': "{{ params.collection_archive_bucket_s3uri }}",
-            'COLLECTION': "{{ params.collection }}",
+            'COLLECTION': "{{ params.collection }}", # Which collection are we publishing
             'PUBLISH_DATA_STAGE': DEFAULT_DATA_STAGE_CONTAINER_PATH,
-            'AWS_ACCESS_KEY_ID': os.getenv('AWS_ACCESS_KEY_ID'),
+            'AWS_ACCESS_KEY_ID': os.getenv('AWS_ACCESS_KEY_ID'), # Pass through AWS credentials
             'AWS_SECRET_ACCESS_KEY': os.getenv('AWS_SECRET_ACCESS_KEY'),
             'AWS_SESSION_TOKEN': os.getenv('AWS_SESSION_TOKEN'),
             'AWS_DEFAULT_REGION': 'us-west-2'
